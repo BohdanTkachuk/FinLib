@@ -1,0 +1,43 @@
+from cmath import exp
+from numpy import *
+from scipy.optimize import *
+
+n = 8  # number of nodes for each step
+sigma = 0.02  # volatility
+N = 10  # number of timesteps
+r = 0.05  # interest rate
+s_0 = 100  # starting price
+
+
+def condMomentGeomBrowMotion(n, r, delta_t, sigma, ):
+    return exp(delta_t * n * (0.5 * sigma ^ 2 * n + r - sigma * 0.5))
+
+
+# x consists p and c from the start p and following c,
+# size of x 2n
+
+def functions(x, delta_t, sigma_sqr, r):
+
+    f_prod = 1
+    n = x.size
+    F = ones(n)
+    for i in range(n // 2, n):
+        f_prod *= x[i]
+    F[n - 1] = f_prod - 1
+    for i in range(0, n - 1):
+        f_sum = 0
+        for j in range(0, n // 2):
+            f_sum += pow(x[n // 2 + j], i) * x[j]
+        F[i] = f_sum - exp(delta_t * i * (0.5 * i * sigma_sqr + r - 0.5 * sigma_sqr))
+    return F
+
+
+z = ones(2 * n) * 1
+delta_t = 1 / N
+sigma_sqr = sigma
+args = (delta_t, sigma_sqr, r)
+q = fsolve(functions, z, args=args)
+print(q)
+p = least_squares(functions, z, args=args, bounds=(0, inf))
+print(p.x)
+print(p.cost)
