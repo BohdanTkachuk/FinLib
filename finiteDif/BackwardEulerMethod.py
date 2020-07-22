@@ -1,22 +1,15 @@
 from numpy import fliplr, fmax, zeros
 from scipy import sparse, linalg
 from scipy.sparse.linalg import spsolve
-
 from finiteDif.initial import initial_option
 
-
 def heat_equation_BE(n, m, e, umin, umax, theta, alpha, sigma, r):
-
     dx = (umax - umin) / n  # Price step
     dt = theta / m  # time step
-
     vam = initial_option(n, r, m, e, umin, dt, dx, alpha, sigma)
-
-
     F = dt / dx ** 2
     A = zeros((n, n))
     b = zeros(n)
-
     for i in range(1, n - 1):
         A[i, i - 1] = -F
         A[i, i + 1] = -F
@@ -36,8 +29,6 @@ def heat_equation_BE(n, m, e, umin, umax, theta, alpha, sigma, r):
     # backwards
     vam = fliplr(vam)
     return vam
-
-
 
 def heat_equation_BE_sparse_matrix(n, m, e, umin, umax, theta, alpha, sigma, r):
     dx = (umax - umin) / n  # Price step
@@ -67,7 +58,6 @@ def heat_equation_BE_sparse_matrix(n, m, e, umin, umax, theta, alpha, sigma, r):
         # same here, need to review
         b[0] = vam[0, i]
         b[n - 1] = 0
-
         # u = linalg.inv(A).dot(b)
         u = spsolve(A, b)
         vam[1: n - 1, i] = fmax(u[1:n - 1], vam[1: n - 1, 0])

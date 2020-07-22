@@ -1,9 +1,5 @@
 from matplotlib.pyplot import plot, xlabel, ylabel, title, savefig
 from numpy import *
-from scipy import sparse
-from scipy.sparse.linalg import spsolve
-
-# Simulation  Parameters
 import BinomialTree
 from finiteDif.BackwardEulerMethod import heat_equation_BE_sparse_matrix
 from finiteDif.CrankNicolsonMethod import heat_equation_BE_sparse_matrix_CN
@@ -21,7 +17,6 @@ def search_by_init_value_of_S(S, umin, umax, vam, n):
             return vam[i - 1, 0]
         diff_old = diff_new
 
-
 def mainCalculator(n, m, K, umin, umax, alpha, beta, sigma, method, r):
     if method == "CN":
         vam = heat_equation_BE_sparse_matrix_CN(n, m, K, umin, umax, theta, alpha, sigma, 0.5, r)
@@ -29,7 +24,6 @@ def mainCalculator(n, m, K, umin, umax, alpha, beta, sigma, method, r):
         vam = heat_equation_FE(n, m, K, umin, umax, theta, alpha, sigma, r)
     elif method == "BE":
         vam = heat_equation_BE_sparse_matrix(n, m, K, umin, umax, theta, alpha, sigma, r)
-
     else:
         print("Wrong method")
         vam = 0
@@ -39,21 +33,17 @@ def mainCalculator(n, m, K, umin, umax, alpha, beta, sigma, method, r):
     v = exp(alpha * log(s) + beta * sigma ** 2 * t / 2) * u
     return v
 
-
 def fixedSpace(U, D, k, n, K, umin, alpha, sigma, method):
     v = zeros((U - D) // k)
     for i in range(D, U, k):
         v[(i - D) // k] = mainCalculator(n, i, K, umin, umax, alpha, beta, sigma, method, r) - 0.0315
     return v
 
-
 def fixedTime(U, D, k, m, K, umin, umax, alpha, beta, sigma, method):
     v = zeros((U - D) // k)
     for i in range(D, U, k):
-
         v[(i - D) // k] = mainCalculator(i, m, K, umin, umax, alpha, beta, sigma, method, r)
     return v
-
 
 m = 10000  # time  steps
 n = 600  # space step (must be big)
@@ -63,13 +53,11 @@ K = 40  # Strike price
 sigma = 0.2  # volatility
 
 # variables changes for having heat equation
-
 alpha = -0.5 * (2 * r / (sigma ** 2) - 1)
 beta = -0.25 * (2 * r / (sigma ** 2) + 1) ** 2
 theta = t * sigma ** 2 / 2
 
 # s = e^x , s is from 0 to inf, to satifsy this interval, x is from -inf to inf, or sufficient large with respect to exponential function
-
 umax = 10  # e^umax is upper bound
 umin = -2  # e^umin is lower bound
 
@@ -96,9 +84,7 @@ CN = fixedTime(U, D, k, m, K, umin, umax, alpha, beta, sigma, method="CN") + 0.0
 
 # Compares the value today of the European(blue) and American(red) Calls, V(S, t), as a function of S.
 #dif = fixedTime(U, D, k, m, K, umin, umax, alpha, beta, sigma, method="FE") - fixedTime(U, D, k, m, K, umin, umax, alpha, beta, sigma, method="BE")
-
 plot(range(D, U, k), FE, 'r',
-
      range(D, U, k), BE, 'g',
      range(D, U, k), CN, 'k',
      range(D, U, k), tv, 'b')
@@ -107,23 +93,3 @@ ylabel('V(S,0)');
 title('Price of American put options, fixed time grid: finite-difference methods');
 savefig("first.png")
 
-'''
-U = 1000
-D = 100
-k = 10
-r = 0.06  # short  rate
-vol = 0.2  # volatility
-S0 = 40.  # initial  stock  level
-T = 1.0
-print(mainCalculation(n, m, K, umin, dt, dx, alpha, sigma, "FE"))
-tv = zeros(len(range(D, U, k)))
-tv[:] = BinomialTree.Binomial(100, S0, 40, r, vol, 1, "P") - 0.0365
-# Compares the value today of the European(blue) and American(red) Calls, V(S, t), as a function of S.
-plot(range(D, U, k), fixedSpace(U, D, k, n, m, K, umin, dx, alpha, sigma, theta, method="BE"), 'r',
-
-     range(D, U, k), tv, 'b')
-xlabel('Number of time points');
-ylabel('V(S,0)');
-title('Price of American option depends on number of time points, CN method');
-savefig("first.png")
-'''

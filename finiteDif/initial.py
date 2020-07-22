@@ -1,8 +1,6 @@
 from numpy.core._multiarray_umath import fmax
 from numpy.ma import *
 
-
-
 def initial_option(n, r, m, e, umin, dt, ds, alpha, sigma):
     v = zeros((n, m), 'd')
     # expiry: V(S, T) = exp(-Alpha * x) max(K - exp(x), 0)

@@ -1,17 +1,15 @@
-# Thete = 1/2 CN method
+
 from numpy import fliplr
 from numpy.core._multiarray_umath import fmax
 from numpy.ma import *
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
-
 from finiteDif.initial import initial_option
 
+# Thete = 1/2 CN method
 def heat_equation_BE_sparse_matrix_CN(n, m, e, umin, umax, theta, alpha, sigma, Theta, r):
-
     dx = (umax - umin) / n  # Price step
     dt = theta / m  # time step
-
     vam = initial_option(n, r, m, e, umin, dt, dx, alpha, sigma)
     F = dt / dx ** 2
     # Representation of sparse matrix and right-hand side
@@ -38,7 +36,6 @@ def heat_equation_BE_sparse_matrix_CN(n, m, e, umin, umax, theta, alpha, sigma, 
         # same here, need to review
         b[0] = vam[0, i]
         b[n - 1] = 0
-
         # u = linalg.inv(A).dot(b)
         u = spsolve(A, b)
         vam[1: n - 1, i] = fmax(u[1:n - 1], vam[1: n - 1, 0])

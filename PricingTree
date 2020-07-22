@@ -17,7 +17,6 @@ def condMomentGeomBrowMotion(n, r, delta_t, sigma, ):
 # size of x 2n
 
 def functions(x, delta_t, sigma_sqr, r):
-
     f_prod = 1
     n = x.size
     F = ones(n)

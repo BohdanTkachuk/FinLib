@@ -6,7 +6,6 @@ from matplotlib.pyplot import *
 # Simulation  Parameters
 m = 1600  # time  steps
 n = 160  # Number of share price points
-
 # Parameters  -- American  Put  Option
 r = 0.06  # short  rate
 d = 0.0  # Continuous dividend yield
@@ -38,10 +37,6 @@ def pricing_options(n, m, smin, ds, e, d):
     aa = 0.5 * dt * (sigma * sigma * multiply(arange(0, n - 2), arange(0, n - 2)) - (r - d) * arange(0, n - 2)).T
     bb = 1 - dt * (sigma * sigma * multiply(arange(0, n - 2), arange(0, n - 2)) + r).T
     cc = 0.5 * dt * (sigma * sigma * multiply(arange(0, n - 2), arange(0, n - 2)) + (r - d) * arange(0, n - 2)).T
-
-
-
-
     # Implementing the explicit algorithm
     for i in range(1, m, 1):
         p =multiply(bb, v[1: n - 1, i - 1]) + multiply(cc, v[2: n, i - 1]) + multiply(aa, v[0: n - 2, i - 1])
@@ -51,12 +46,10 @@ def pricing_options(n, m, smin, ds, e, d):
         vam[1: n - 1, i] = fmax(
             multiply(bb, vam[1: n - 1, i - 1]) + multiply(cc, vam[2: n, i - 1]) + multiply(aa, vam[0: n - 2, i - 1]),
             vam[1: n - 1, 1])
-
     # Reversal of the time components in the matrix as the solution of the Black Scholes equation was performed
     # backwards
     v = fliplr(v)
     vam = fliplr(vam)
-
     # Compares the value today of the European(blue) and American(red) Calls, V(S, t), as a function of S.
     plot(smin + multiply(ds, arange(0, n - 1)), vam[0:n - 1, 0], 'r', smin + multiply(ds, arange(0, n - 1)), v[0:n - 1, 0], 'b')
     xlabel('S');
